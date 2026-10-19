@@ -1,0 +1,13 @@
+model:
+  name: google/gemma-3-4b-it
+training:
+  method: LoRA
+  epochs: 1
+  batch_size: 1
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0001
+  max_length: 512
+lora:
+  r: 8
+  alpha: 16
+  dropout: 0.05
