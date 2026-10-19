@@ -1,0 +1,51 @@
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+hf_token*
+huggingface_token*
+*credentials*
+secrets/
+credentials.json
+secrets.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model weights and adapters
+final_adapter/
+*_adapter/
+adapter_model.safetensors
+adapter_model.bin
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.ckpt
+pytorch_model*.bin
+checkpoints/
+outputs/
+
+# Dataset files that should not be public by default
+data/raw/
+data/processed/
+data/private/
+*.parquet
+
+# Logs and caches
+logs/
+wandb/
+.cache/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
