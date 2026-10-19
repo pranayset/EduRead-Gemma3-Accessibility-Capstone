@@ -1,0 +1,15 @@
+# Starter list. Pin versions only after validating a working Colab environment.
+torch
+transformers
+accelerate
+peft
+datasets
+pillow
+pandas
+scikit-learn
+sympy
+gradio
+huggingface_hub
+PyYAML
+
+# Add bitsandbytes and/or trl only if the final notebook imports and uses them.
