@@ -1,13 +1,202 @@
+
+# ============================================================
+# EduRead Gemma 3 Accessibility Capstone
+# PaliGemma 3B LoRA Fine-Tuning Configuration
+# ============================================================
+
+project:
+  name: "EduRead-Gemma3-Accessibility-Capstone"
+  description: "Accessibility-focused vision-language fine-tuning"
+  version: "1.0.0"
+  seed: 42
+
+# ------------------------------------------------------------
+# 1. Base Model Configuration
+# ------------------------------------------------------------
+
 model:
-  name: google/gemma-3-4b-it
-training:
-  method: LoRA
-  epochs: 1
-  batch_size: 1
-  gradient_accumulation_steps: 4
-  learning_rate: 0.0001
-  max_length: 512
+  model_id: "google/paligemma-3b-pt-448"
+  model_type: "PaliGemmaForConditionalGeneration"
+
+  trust_remote_code: false
+  revision: "main"
+
+  image_resolution: 448
+  torch_dtype: "float16"
+  attn_implementation: "eager"
+
+  use_cache: false
+
+  low_cpu_mem_usage: true
+
+# ------------------------------------------------------------
+# 2. Processor Configuration
+# ------------------------------------------------------------
+
+processor:
+  processor_id: "google/paligemma-3b-pt-448"
+  image_size: 448
+  max_length: 256
+  padding: "longest"
+  truncation: true
+
+# ------------------------------------------------------------
+# 3. Dataset Configuration
+# ------------------------------------------------------------
+
+dataset:
+  train_path: "data/processed/train"
+  eval_path: "data/processed/eval"
+
+  image_column: "image"
+  prompt_column: "prefix"
+  target_column: "label"
+
+  dataset_format: "huggingface"
+
+  train_split: "train"
+  eval_split: "validation"
+
+  remove_empty_records: true
+  validate_images: true
+
+  # Use only public, synthetic or appropriately licensed data.
+  allow_private_data: false
+
+# ------------------------------------------------------------
+# 4. LoRA Configuration
+# ------------------------------------------------------------
+
 lora:
+  enabled: true
+  method: "peft"
+
+  task_type: "CAUSAL_LM"
+
   r: 8
-  alpha: 16
-  dropout: 0.05
+  lora_alpha: 16
+  lora_dropout: 0.05
+
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+
+  bias: "none"
+
+  inference_mode: false
+
+# ------------------------------------------------------------
+# 5. Training Configuration
+# ------------------------------------------------------------
+
+training:
+  output_dir: "/content/drive/MyDrive/EduRead_Gemma3_Accessibility_Capstone"
+
+  num_train_epochs: 3
+
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+
+  gradient_accumulation_steps: 4
+
+  learning_rate: 0.00002
+
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+
+  lr_scheduler_type: "cosine"
+
+  optim: "adamw_torch"
+
+  max_grad_norm: 1.0
+
+  gradient_checkpointing: true
+
+  fp16: true
+  bf16: false
+
+  dataloader_num_workers: 2
+  dataloader_pin_memory: true
+
+  remove_unused_columns: false
+
+  logging_strategy: "steps"
+  logging_steps: 10
+
+  save_strategy: "epoch"
+  save_total_limit: 3
+
+  evaluation_strategy: "no"
+
+  report_to: "none"
+
+  seed: 42
+
+# ------------------------------------------------------------
+# 6. Checkpoint Configuration
+# ------------------------------------------------------------
+
+checkpoint:
+  save_steps: 100
+  save_adapter_only: true
+
+  output_adapter_dir: "/content/drive/MyDrive/EduRead_Gemma3_Accessibility_Capstone/final_adapter"
+
+  resume_from_checkpoint: false
+
+  save_safetensors: true
+
+# ------------------------------------------------------------
+# 7. Evaluation Configuration
+# ------------------------------------------------------------
+
+evaluation:
+  enabled: true
+
+  metrics:
+    - "description_relevance"
+    - "description_completeness"
+    - "description_clarity"
+    - "mathematical_accuracy"
+    - "accessibility_usefulness"
+
+  generate_max_new_tokens: 128
+  do_sample: false
+
+# ------------------------------------------------------------
+# 8. Hardware Configuration
+# ------------------------------------------------------------
+
+hardware:
+  device: "auto"
+  mixed_precision: "fp16"
+
+  gradient_checkpointing: true
+
+  # Conservative starting configuration for 16 GB GPUs.
+  recommended_gpu_memory_gb: 16
+
+# ------------------------------------------------------------
+# 9. Output Configuration
+# ------------------------------------------------------------
+
+outputs:
+  save_model: true
+  save_tokenizer: true
+  save_processor: true
+  save_training_metrics: true
+
+  adapter_name: "eduread_paligemma_lora"
+
+  logs_dir: "outputs/logs"
+  checkpoints_dir: "outputs/checkpoints"
+
+# ------------------------------------------------------------
+# 10. Security Configuration
+# ------------------------------------------------------------
+
+security:
+  store_huggingface_token_in_notebook: false
+  upload_model_weights_to_github: false
+  upload_private_datasets_to_github: false
+  use_synthetic_data_for_examples: true
