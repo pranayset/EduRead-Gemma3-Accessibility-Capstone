@@ -1,51 +1,64 @@
-# Secrets and credentials
-.env
-.env.*
-!.env.example
-hf_token*
-huggingface_token*
-*credentials*
-secrets/
-credentials.json
-secrets.json
-*.pem
-*.key
 
 # Python
 __pycache__/
 *.py[cod]
-.venv/
+*.so
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
 venv/
 env/
+.venv/
 
-# Jupyter
+# Jupyter Notebook
 .ipynb_checkpoints/
 
-# Model weights and adapters
-final_adapter/
-*_adapter/
-adapter_model.safetensors
-adapter_model.bin
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+token.json
+
+# Model weights and checkpoints
 *.safetensors
-*.gguf
+*.bin
 *.pt
 *.pth
 *.ckpt
-pytorch_model*.bin
-checkpoints/
-outputs/
+*.h5
+*.onnx
 
-# Dataset files that should not be public by default
+# Hugging Face cache
+.cache/
+.cache/huggingface/
+huggingface_cache/
+
+# LoRA adapters and training outputs
+final_adapter/
+checkpoints/
+checkpoint-*/
+checkpoint_*/
+outputs/
+wandb/
+
+# Dataset and generated files
 data/raw/
 data/processed/
-data/private/
+data/generated/
 *.parquet
 
-# Logs and caches
+# Google Colab and Drive
+/content/drive/
+
+# Logs
+*.log
 logs/
-wandb/
-.cache/
+
+# Operating system
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/
