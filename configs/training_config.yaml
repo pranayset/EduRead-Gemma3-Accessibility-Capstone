@@ -1,202 +1,77 @@
-
-# ============================================================
-# EduRead Gemma 3 Accessibility Capstone
-# PaliGemma 3B LoRA Fine-Tuning Configuration
-# ============================================================
+# EduRead V3 — reference configuration based on the audited run.
+# This file documents known settings; it is not an executable guarantee.
+# Confirm paths, package compatibility, and hardware before a new run.
 
 project:
   name: "EduRead-Gemma3-Accessibility-Capstone"
-  description: "Accessibility-focused vision-language fine-tuning"
-  version: "1.0.0"
+  dataset_version: "V3"
   seed: 42
-
-# ------------------------------------------------------------
-# 1. Base Model Configuration
-# ------------------------------------------------------------
 
 model:
   model_id: "google/paligemma-3b-pt-448"
-  model_type: "PaliGemmaForConditionalGeneration"
-
-  trust_remote_code: false
-  revision: "main"
-
+  model_class: "PaliGemmaForConditionalGeneration"
+  processor_id: "google/paligemma-3b-pt-448"
   image_resolution: 448
   torch_dtype: "float16"
-  attn_implementation: "eager"
+  attention_implementation: "eager"
 
-  use_cache: false
-
-  low_cpu_mem_usage: true
-
-# ------------------------------------------------------------
-# 2. Processor Configuration
-# ------------------------------------------------------------
-
-processor:
-  processor_id: "google/paligemma-3b-pt-448"
-  image_size: 448
-  max_length: 256
-  padding: "longest"
-  truncation: true
-
-# ------------------------------------------------------------
-# 3. Dataset Configuration
-# ------------------------------------------------------------
-
-dataset:
-  train_path: "data/processed/train"
-  eval_path: "data/processed/eval"
-
-  image_column: "image"
-  prompt_column: "prefix"
-  target_column: "label"
-
-  dataset_format: "huggingface"
-
-  train_split: "train"
-  eval_split: "validation"
-
-  remove_empty_records: true
-  validate_images: true
-
-  # Use only public, synthetic or appropriately licensed data.
-  allow_private_data: false
-
-# ------------------------------------------------------------
-# 4. LoRA Configuration
-# ------------------------------------------------------------
+quantization:
+  method: "QLoRA"
+  load_in_4bit: true
+  quant_type: "nf4"
+  double_quant: true
+  compute_dtype: "float16"
 
 lora:
   enabled: true
-  method: "peft"
-
+  method: "PEFT"
   task_type: "CAUSAL_LM"
-
-  r: 8
-  lora_alpha: 16
-  lora_dropout: 0.05
-
+  rank: 8
+  alpha: 16
+  dropout: 0.05
   target_modules:
     - "q_proj"
     - "v_proj"
-
   bias: "none"
 
-  inference_mode: false
-
-# ------------------------------------------------------------
-# 5. Training Configuration
-# ------------------------------------------------------------
+dataset:
+  train_manifest: "data/manifests/train.json"
+  evaluation_manifest: "data/manifests/eval.json"
+  training_records: 160
+  evaluation_records: 40
+  tasks:
+    - "mathematical_transcription"
+    - "accessible_explanation"
+  image_size: 448
+  private_data_allowed_in_repository: false
 
 training:
-  output_dir: "/content/drive/MyDrive/EduRead_Gemma3_Accessibility_Capstone"
-
-  num_train_epochs: 3
-
-  per_device_train_batch_size: 1
-  per_device_eval_batch_size: 1
-
-  gradient_accumulation_steps: 4
-
+  epochs: 3
   learning_rate: 0.00002
-
-  weight_decay: 0.01
-  warmup_ratio: 0.03
-
-  lr_scheduler_type: "cosine"
-
-  optim: "adamw_torch"
-
-  max_grad_norm: 1.0
-
-  gradient_checkpointing: true
-
-  fp16: true
-  bf16: false
-
-  dataloader_num_workers: 2
-  dataloader_pin_memory: true
-
-  remove_unused_columns: false
-
-  logging_strategy: "steps"
-  logging_steps: 10
-
-  save_strategy: "epoch"
-  save_total_limit: 3
-
-  evaluation_strategy: "no"
-
-  report_to: "none"
-
+  optimizer_updates_per_epoch: 40
+  total_optimizer_updates: 120
+  precision: "fp16"
   seed: 42
 
-# ------------------------------------------------------------
-# 6. Checkpoint Configuration
-# ------------------------------------------------------------
-
-checkpoint:
-  save_steps: 100
-  save_adapter_only: true
-
-  output_adapter_dir: "/content/drive/MyDrive/EduRead_Gemma3_Accessibility_Capstone/final_adapter"
-
-  resume_from_checkpoint: false
-
-  save_safetensors: true
-
-# ------------------------------------------------------------
-# 7. Evaluation Configuration
-# ------------------------------------------------------------
-
 evaluation:
-  enabled: true
+  generation_max_new_tokens: 64
+  greedy_decoding:
+    do_sample: false
+    num_beams: 1
+  report:
+    - "exact_match"
+    - "token_accuracy"
+    - "character_similarity"
+    - "human_mathematical_review"
+    - "accessibility_review"
 
-  metrics:
-    - "description_relevance"
-    - "description_completeness"
-    - "description_clarity"
-    - "mathematical_accuracy"
-    - "accessibility_usefulness"
-
-  generate_max_new_tokens: 128
-  do_sample: false
-
-# ------------------------------------------------------------
-# 8. Hardware Configuration
-# ------------------------------------------------------------
-
-hardware:
-  device: "auto"
-  mixed_precision: "fp16"
-
-  gradient_checkpointing: true
-
-  # Conservative starting configuration for 16 GB GPUs.
-  recommended_gpu_memory_gb: 16
-
-# ------------------------------------------------------------
-# 9. Output Configuration
-# ------------------------------------------------------------
-
-outputs:
-  save_model: true
-  save_tokenizer: true
-  save_processor: true
-  save_training_metrics: true
-
-  adapter_name: "eduread_paligemma_lora"
-
-  logs_dir: "outputs/logs"
-  checkpoints_dir: "outputs/checkpoints"
-
-# ------------------------------------------------------------
-# 10. Security Configuration
-# ------------------------------------------------------------
+artifacts:
+  adapter_output: "outputs/eduread_v3_qlora/final_adapter"
+  checkpoints_directory: "outputs/eduread_v3_qlora/checkpoints"
+  keep_model_weights_out_of_git: true
 
 security:
-  store_huggingface_token_in_notebook: false
-  upload_model_weights_to_github: false
-  upload_private_datasets_to_github: false
-  use_synthetic_data_for_examples: true
+  credentials_from_environment_or_colab_secrets: true
+  commit_private_datasets: false
+  commit_model_weights: false
+  commit_adapter_files: false
