@@ -1,8 +1,25 @@
-"""EduRead accessibility-focused vision-language capstone package.
+"""EduRead V3 reusable workflow modules.
 
-The current prototype workflow is documented in the notebooks directory.
-Reusable inference and evaluation modules should be added here as they are
-extracted, tested, and reviewed.
+Importing this package does not load models, access datasets, write files,
+or start training.
 """
+from .config import (
+    DatasetConfig,
+    EduReadConfig,
+    LoRAConfig,
+    ModelConfig,
+    QuantizationConfig,
+    TrainingConfig,
+)
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
+
+__all__ = [
+    "DatasetConfig",
+    "EduReadConfig",
+    "LoRAConfig",
+    "ModelConfig",
+    "QuantizationConfig",
+    "TrainingConfig",
+    "__version__",
+]
