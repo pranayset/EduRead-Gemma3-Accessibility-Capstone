@@ -1,3 +1,19 @@
 # Tests
 
-Add tests for input validation, output format, mathematical helper functions, and app utilities. Prefer a small deterministic smoke test that does not download the full model or require a GPU. Document tests that require model access separately.
+Add tests as reusable source modules are implemented. Prefer deterministic CPU tests that do not download a model or require a GPU.
+
+Suggested coverage:
+- Manifest schema and required-field validation.
+- Image path and image-format validation.
+- Task-type and prompt validation.
+- Target text and label formatting.
+- Inference input validation and output schema.
+- Mathematical helper functions, where applicable.
+
+Run the test suite with:
+
+```bash
+python -m pytest
+```
+
+The current repository may contain no executable tests yet. Do not interpret an empty test suite as evidence of model quality or successful end-to-end inference. Document GPU/model-dependent smoke tests separately.
