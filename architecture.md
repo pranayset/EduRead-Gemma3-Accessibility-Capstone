@@ -1,155 +1,87 @@
+# EduRead V3 — System Architecture
 
-# EduRead Gemma 3 - System Architecture
+## 1. Project overview
 
-## 1. Project Overview
+EduRead is an accessibility-focused vision-language capstone exploring image understanding and mathematical descriptions for visually impaired students.
 
-EduRead Gemma 3 is an accessibility-focused vision-language
-AI capstone project.
+The audited V3 workflow uses **PaliGemma 3B** (`google/paligemma-3b-pt-448`). Do not confuse this V3 base model with separate Gemma 3 4B IT experiments.
 
-Its objective is to explore how vision-language models can
-generate meaningful image descriptions and mathematical
-descriptions to support visually impaired students.
+## 2. Architecture
 
-## 2. Technology Stack
+```mermaid
+flowchart TD
+    A[Educational equation image] --> B[Image preprocessing and PaliGemma processor]
+    B --> C[PaliGemma 3B vision-language model]
+    D[Task prompt] --> C
+    C --> E[Language generation]
+    E --> F[Mathematical transcription]
+    E --> G[Accessible English explanation]
+    F --> H[Human and automated evaluation]
+    G --> H
+    I[Reviewed image and text dataset] --> J[QLoRA fine-tuning]
+    J --> K[PEFT LoRA adapter]
+    K --> C
+```
 
-| Component | Technology |
+## 3. Components
+
+| Component | Responsibility |
 |---|---|
-| Base Model | PaliGemma 3B |
-| Model Framework | PyTorch |
-| Model Library | Hugging Face Transformers |
-| Fine-Tuning | PEFT / LoRA |
-| Dataset Processing | Python / Pandas |
-| Image Processing | Pillow |
-| Interface | Gradio |
-| Development | Google Colab |
-| Model Storage | Google Drive |
-| Version Control | Git / GitHub |
+| Input | Educational images containing mathematical expressions |
+| Processor | Converts image and prompt to model inputs |
+| Vision-language model | Interprets image and generates text |
+| Dataset | Paired image, prompt, and target examples |
+| Fine-tuning | QLoRA with PEFT LoRA adapters |
+| Inference | Produces transcription or accessible explanation |
+| Evaluation | Checks token metrics, mathematical fidelity, clarity, and accessibility |
+| Demo interface | Gradio prototype, when implemented and tested |
 
-## 3. Architecture Components
+## 4. Audited V3 model and training configuration
 
-### 3.1 Input Layer
-
-Accepts educational images containing:
-- Mathematical equations
-- Diagrams
-- Charts
-- Educational illustrations
-- Other learning materials
-
-### 3.2 Image Preprocessing
-
-Processes images into the format expected by
-the vision-language model.
-
-### 3.3 Model Processing
-
-Uses PaliGemma 3B and its associated processor
-to understand visual and textual information.
-
-### 3.4 LoRA Fine-Tuning
-
-Uses Parameter-Efficient Fine-Tuning (PEFT)
-to adapt selected model components.
-
-Training configuration includes:
-
+- Base model: `google/paligemma-3b-pt-448`
+- Model class: `PaliGemmaForConditionalGeneration`
+- Image resolution: 448 × 448
+- Fine-tuning: QLoRA / PEFT
+- Quantization: 4-bit NF4, double quantization enabled
+- Compute precision: FP16
 - LoRA rank: 8
 - LoRA alpha: 16
 - LoRA dropout: 0.05
-- Target modules: q_proj and v_proj
+- Target modules: `q_proj`, `v_proj`
+- Training records: 160
+- Evaluation records: 40
+- Epochs: 3
+- Optimizer updates: 120 total
 
-### 3.5 Output Generation
+The reference values are documented from the audited V3 run. Consult the notebook and saved training summary before reproducing a run.
 
-The adapted model explores generation of:
+## 5. Data flow
 
-- Image Alt-Text
-- Educational image descriptions
-- Mathematical descriptions
+1. Select an educational mathematical image.
+2. Apply the task-specific prompt.
+3. Process image and text with the PaliGemma processor.
+4. Generate mathematical transcription or accessible explanation.
+5. Review output for correctness, completeness, and accessibility.
+6. Record evaluation results and limitations.
 
-### 3.6 Evaluation Layer
+## 6. Repository boundaries
 
-Evaluates generated outputs for:
+- `src/eduread/`: reusable Python package code as it is extracted and tested.
+- `notebooks/`: research and Colab workflow.
+- `configs/`: documented configuration.
+- `data/`: manifests, schema documentation, and reviewed public samples only.
+- `evaluation/`: evaluation protocol and reports.
+- `tests/`: deterministic tests that do not require model downloads.
+- `outputs/`: local-only training outputs, ignored by Git.
 
-- Description relevance
-- Accuracy
-- Completeness
-- Clarity
-- Accessibility usefulness
+## 7. Artifact storage
 
-### 3.7 User Interface
+Keep private datasets, model weights, LoRA adapters, checkpoints, and credentials outside the public repository. The audited adapter was stored in Google Drive. Do not commit it to GitHub.
 
-Gradio provides an interface for submitting
-educational images and reviewing generated descriptions.
+## 8. Responsible AI and accessibility
 
-## 4. Data Flow
+Generated mathematical explanations can omit or misinterpret symbols, variables, units, and relationships. Outputs require appropriate review. Do not claim formal accessibility validation or production readiness without evidence.
 
-1. User submits an educational image.
-2. Image preprocessing prepares the input.
-3. PaliGemma Processor converts the input.
-4. The adapted vision-language model generates output.
-5. Generated descriptions are evaluated.
-6. Gradio displays the resulting descriptions.
+## 9. Known V3 limitations
 
-## 5. Repository Structure
-
-    EduRead-Gemma3-Accessibility-Capstone/
-    |
-    |-- README.md
-    |-- CONTRIBUTING.md
-    |-- architecture.md
-    |-- requirements.txt
-    |-- .gitignore
-    |
-    |-- configs/
-    |   |-- training_config.yaml
-    |
-    |-- data/
-    |   |-- README.md
-    |   |-- sample/
-    |       |-- manifest.csv
-    |
-    |-- evaluation/
-    |   |-- README.md
-    |
-    |-- notebooks/
-    |   |-- EduRead_Gemma3_Accessibility_Capstone.ipynb
-    |   |-- README.md
-    |
-    |-- src/
-    |   |-- eduread/
-    |       |-- README.md
-    |
-    |-- tests/
-        |-- README.md
-
-## 6. Model Storage
-
-Trained adapters and checkpoints are stored
-separately from the public GitHub repository.
-
-Google Drive location:
-
-    /content/drive/MyDrive/
-    EduRead_Gemma3_Accessibility_Capstone/final_adapter
-
-Model weights and private training artifacts
-must not be committed to GitHub.
-
-## 7. Security and Responsible AI
-
-- Do not commit Hugging Face access tokens.
-- Do not publish private datasets.
-- Use appropriately licensed educational images.
-- Validate generated descriptions.
-- Clearly communicate model limitations.
-- Do not assume generated mathematical descriptions
-  are always correct.
-
-## 8. Future Improvements
-
-- Improve mathematical diagram understanding.
-- Expand synthetic educational datasets.
-- Improve Alt-Text quality.
-- Add accessibility-focused evaluation metrics.
-- Improve Gradio user experience.
-- Explore multilingual educational descriptions.
+See [V3 Dataset Integrity Audit](V3_DATASET_INTEGRITY_AUDIT.md). In particular, the audit identified two exact normalized equation overlaps across training and evaluation, training redundancy, and no evaluation examples for linear algebra or logarithms.
