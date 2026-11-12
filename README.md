@@ -17,6 +17,7 @@ EduRead explores adapting a Gemma 3 vision-language model to generate useful alt
 ```text
 .
 ├── README.md
+├── V3_DATASET_INTEGRITY_AUDIT.md
 ├── .gitignore
 ├── requirements.txt
 ├── configs/
@@ -75,6 +76,12 @@ See [`data/README.md`](data/README.md). Do not commit private student data, priv
 ## Evaluation
 
 See [`evaluation/README.md`](evaluation/README.md). Report actual results only. Include failure cases such as missed labels, incorrect symbols, hallucinated details, or ambiguous diagrams.
+
+### V3 dataset integrity audit
+
+The [V3 Dataset Integrity Audit Report](V3_DATASET_INTEGRITY_AUDIT.md) consolidates the read-only checks through Step 71F. It documents the 200-record dataset structure, raw and processed data validation, image and label integrity, category distribution, duplication findings, train/evaluation equation overlap, and remaining evaluation-coverage limitations.
+
+The report records structural validation results; it does not claim that dataset integrity proves model-generation accuracy or production readiness.
 
 ## Running the app
 
