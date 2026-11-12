@@ -37,8 +37,8 @@ def create_v3_scheduler(optimizer):
     )
 
 
-def evaluate_v3_loss(model, eval_loader, device="cuda"):
-    """Token-weighted evaluation, without gradients or optimizer updates."""
+def evaluate_v3_loss(model, eval_loader, device="cuda", pass_num_items_in_batch=False):
+    """Token-weighted evaluation; epoch 1 notebook call passes num_items_in_batch."""
     model.eval()
     weighted_loss = 0.0
     tokens = 0
@@ -50,7 +50,10 @@ def evaluate_v3_loss(model, eval_loader, device="cuda"):
             if count <= 0:
                 raise ValueError("Evaluation batch has no shifted supervised tokens.")
             with torch.autocast("cuda", dtype=torch.float16, enabled=str(device).startswith("cuda")):
-                outputs = model(**inputs, use_cache=False, num_items_in_batch=count)
+                if pass_num_items_in_batch:
+                    outputs = model(**inputs, use_cache=False, num_items_in_batch=count)
+                else:
+                    outputs = model(**inputs, use_cache=False)
             loss = float(outputs.loss.item())
             if not math.isfinite(loss):
                 raise FloatingPointError("Non-finite evaluation loss.")
@@ -129,7 +132,11 @@ def _run_epoch(model, processor, train_loader, eval_loader, optimizer, scheduler
     if not math.isfinite(train_loss):
         raise FloatingPointError("Non-finite training loss.")
 
-    evaluation = evaluate_v3_loss(model, eval_loader, device=device)
+    # Preserve the notebook detail: epoch 1 supplied num_items_in_batch;
+    # epoch 2 and 3 evaluation calls did not.
+    evaluation = evaluate_v3_loss(
+        model, eval_loader, device=device, pass_num_items_in_batch=(epoch == 1)
+    )
     model.train()
     checkpoint.mkdir(parents=False, exist_ok=False)
     model.save_pretrained(checkpoint, safe_serialization=True)
