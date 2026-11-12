@@ -129,3 +129,32 @@ See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Licensing
 
 A license has not yet been selected. See [LICENSE_STATUS.md](LICENSE_STATUS.md). Public availability alone does not grant reuse rights.
+
+
+## Python package modules
+
+Reusable components extracted from the completed V3 notebook are in `src/eduread/`:
+
+- `config.py`: audited V3 model, quantization, LoRA, and training settings.
+- `data.py`: read-only raw-manifest and processed-tensor validation.
+- `model_loader.py`: explicit PaliGemma processor and NF4 base-model loaders.
+- `adapters.py`: PEFT adapter initialization and explicit save/load helpers.
+- `training.py`: optimizer/scheduler builders and supervised-token accounting.
+- `inference.py`: prompt-boundary handling and greedy inference.
+- `evaluation.py`: text normalization and prediction similarity summaries.
+
+Importing the package does not load model weights, read the private dataset, write artifacts, or train. Model loading, adapter initialization, optimizer construction, inference, and saving occur only when their respective functions are explicitly called. The reusable modules do not automatically run the completed training loop.
+
+Install the package in editable mode from the repository root:
+
+```bash
+pip install -e .
+```
+
+Run the lightweight unit tests:
+
+```bash
+python -m pytest
+```
+
+The test suite covers configuration and text-evaluation helpers; it is not an end-to-end model or GPU validation.
