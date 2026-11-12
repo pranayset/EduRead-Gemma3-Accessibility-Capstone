@@ -1,25 +1,35 @@
 # EduRead — Gemma 3 Accessibility Capstone
 
-EduRead explores adapting a Gemma 3 vision-language model to generate useful alt-text, detailed visual descriptions, and mathematical descriptions for visually impaired students.
+An educational vision-language capstone exploring mathematical image understanding and accessible descriptions for visually impaired students.
 
-> **Status note:** Update the results table only after you have verified each stage. The LoRA adapter is stored separately in Google Drive and is intentionally excluded from this repository.
+> **V3 model clarification:** The audited V3 fine-tuning workflow uses **PaliGemma 3B** (`google/paligemma-3b-pt-448`). The repository name reflects the broader capstone lineage; this V3 run should not be described as fine-tuning standalone Gemma 3 4B IT.
 
-## Goals
+## Project objectives
 
-- Establish a baseline using the selected Gemma 3 model.
-- Prepare and review image-description examples.
-- Experiment with parameter-efficient fine-tuning (LoRA/PEFT).
-- Evaluate grounding, usefulness, accessibility, and mathematical fidelity.
-- Build an accessible demonstration interface.
+- Convert mathematical expressions in images into spoken mathematical wording.
+- Generate clear English explanations of mathematical expressions.
+- Explore parameter-efficient vision-language fine-tuning using QLoRA and PEFT.
+- Evaluate mathematical fidelity, completeness, clarity, and accessibility usefulness.
+- Document limitations and failure cases transparently.
 
 ## Repository structure
 
 ```text
-.
+EduRead-Gemma3-Accessibility-Capstone/
 ├── README.md
-├── V3_DATASET_INTEGRITY_AUDIT.md
+├── README.txt
+├── LICENSE_STATUS.md
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── SECURITY.md
+├── CHANGELOG.md
+├── CITATION.cff
 ├── .gitignore
+├── .env.example
+├── pyproject.toml
 ├── requirements.txt
+├── architecture.md
+├── V3_DATASET_INTEGRITY_AUDIT.md
 ├── configs/
 │   └── training_config.yaml
 ├── data/
@@ -29,78 +39,90 @@ EduRead explores adapting a Gemma 3 vision-language model to generate useful alt
 ├── evaluation/
 │   └── README.md
 ├── notebooks/
-│   └── README.md
+│   ├── README.md
+│   └── EduRead_Gemma3_Accessibility_Capstone.ipynb
 ├── src/
 │   └── eduread/
-│       └── README.md
+│       ├── README.md
+│       └── __init__.py
 └── tests/
     └── README.md
 ```
 
-Copy your real notebook from Google Drive to `notebooks/` and your existing Python source files to `src/eduread/`. This starter package does not contain your actual notebook, source implementation, dataset, or adapter.
+## V3 model and method
 
-## Model and compute
+| Item | Audited V3 configuration |
+|---|---|
+| Base model | `google/paligemma-3b-pt-448` |
+| Model class | `PaliGemmaForConditionalGeneration` |
+| Image resolution | 448 × 448 |
+| Fine-tuning | QLoRA / PEFT |
+| Quantization | 4-bit NF4, double quantization |
+| Compute precision | FP16 |
+| LoRA rank | 8 |
+| LoRA alpha | 16 |
+| LoRA dropout | 0.05 |
+| Target modules | `q_proj`, `v_proj` |
+| Training records | 160 |
+| Evaluation records | 40 |
+| Epochs | 3 |
+| Optimizer updates | 120 |
 
-The intended base model is `google/gemma-3-4b-it`. Review its model card and usage conditions before using it. A free Colab GPU is not guaranteed. Validate baseline inference before running fine-tuning.
+See [`configs/training_config.yaml`](configs/training_config.yaml). It documents known audited settings and is a reference, not a guarantee that a fresh run can be reproduced without environment-specific adjustments.
 
-## Google Colab setup
+## Quick start
 
-1. Open your existing notebook from Google Drive.
-2. Install compatible dependencies. `requirements.txt` is a starting point; pin tested versions before publishing a reproducible environment.
-3. If authentication is required, store your Hugging Face token in Colab Secrets. Do not paste it into notebook cells or commit it to GitHub.
-4. Run a baseline inference test.
-5. Review dataset sources, permissions, labels, and train/validation/test splits.
-6. Run fine-tuning only after the baseline works and compute is available.
-7. Save the trained adapter to persistent Google Drive storage and reload it to verify the saved artifact.
-8. Record evaluation results and limitations.
+1. Clone this repository.
+2. Create and activate a Python virtual environment.
+3. Install compatible dependencies. PyTorch wheels depend on your CUDA/CPU environment; select the correct build rather than assuming the captured Colab CUDA build works on every machine.
+4. Open the notebook in `notebooks/` or Google Colab.
+5. Configure Hugging Face authentication through Colab Secrets or a local environment variable when required.
+6. Review data provenance, licensing, and split integrity before training.
+7. Run a baseline inference test before attempting fine-tuning.
 
-## Adapter storage
+Do not put real tokens in notebooks or commit them. The `.env.example` file is a template only.
 
-Keep adapter weights outside this public repository. A typical PEFT save pattern is shown below; use it only if `model` is the trained PEFT-compatible model object and `processor` is the processor used by your workflow.
+## Dataset policy
 
-```python
-adapter_dir = (
-    "/content/drive/MyDrive/"
-    "EduRead_Gemma3_Accessibility_Capstone/final_adapter"
-)
-model.save_pretrained(adapter_dir)
-processor.save_pretrained(adapter_dir)  # if applicable
+The private V3 dataset and model artifacts are not included in this public repository. The `data/` directory contains documentation and a sample manifest schema only. Use synthetic, public, or appropriately licensed examples for public demonstrations.
+
+See [Data documentation](data/README.md).
+
+## Evaluation and audit
+
+See [Evaluation guidance](evaluation/README.md) and the [V3 Dataset Integrity Audit](V3_DATASET_INTEGRITY_AUDIT.md).
+
+The audit found strong structural integrity across 200 records, with documented limitations:
+- Two exact normalized equations overlap between training and evaluation.
+- Repeated mathematical content occurs in training.
+- Linear algebra and logarithms have no evaluation examples.
+- Some evaluation categories have very small sample sizes.
+
+Dataset integrity does not prove generation accuracy, generalization, or formal accessibility validation. See the audit for details.
+
+## Architecture
+
+See [architecture.md](architecture.md) for the system architecture, data flow, model components, and security boundaries.
+
+## Tests
+
+Run lightweight repository tests with:
+
+```bash
+python -m pytest
 ```
 
-After saving, verify that the adapter configuration and weight files exist, then test reloading in a fresh model instance. Do not upload model weights to this repository.
+The tests directory currently contains test-planning documentation. Add actual tests as reusable modules are implemented; do not interpret an empty test suite as successful model validation.
 
-## Dataset
+## Security and responsible AI
 
-See [`data/README.md`](data/README.md). Do not commit private student data, private/raw images, personal information, or images without suitable usage permission. The sample manifest is only a schema example, not a dataset.
+- Private datasets, raw/processed tensors, model weights, adapters, checkpoints, and credentials must remain outside Git.
+- Review notebooks and outputs before committing.
+- Validate generated mathematical descriptions with appropriate human review.
+- Do not claim formal accessibility certification or production readiness without evidence.
 
-## Evaluation
+See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-See [`evaluation/README.md`](evaluation/README.md). Report actual results only. Include failure cases such as missed labels, incorrect symbols, hallucinated details, or ambiguous diagrams.
+## Licensing
 
-### V3 dataset integrity audit
-
-The [V3 Dataset Integrity Audit Report](V3_DATASET_INTEGRITY_AUDIT.md) consolidates the read-only checks through Step 71F. It documents the 200-record dataset structure, raw and processed data validation, image and label integrity, category distribution, duplication findings, train/evaluation equation overlap, and remaining evaluation-coverage limitations.
-
-The report records structural validation results; it does not claim that dataset integrity proves model-generation accuracy or production readiness.
-
-## Running the app
-
-Copy your real app implementation into `src/eduread/` and document the tested launch command here. For example, `python -m eduread.app` is only a template and may not match your current code.
-
-## Results status
-
-| Stage | Status | Evidence |
-|---|---|---|
-| Baseline inference | Update after verifying | Notebook output or test record |
-| Dataset preparation | Update after verifying | Dataset summary and provenance |
-| LoRA fine-tuning | Training reported complete; adapter saved in Drive | Verify saved files and reload before claiming reproducibility |
-| Evaluation | Update after running | Metrics plus human review |
-| Accessible app | Update after testing | Tested launch instructions |
-
-## Limitations
-
-A vision-language model can misread symbols, labels, units, chart axes, and spatial relationships. Important mathematical content should be verified by a trusted source or educator. Do not claim formal accessibility validation unless it has been performed.
-
-## Licensing and hosting
-
-This starter repository intentionally does not include a license file or a hosted demo URL.
+A license has not yet been selected. See [LICENSE_STATUS.md](LICENSE_STATUS.md). Public availability alone does not grant reuse rights.
