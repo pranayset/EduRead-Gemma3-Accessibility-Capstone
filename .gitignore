@@ -1,64 +1,147 @@
+# ============================================================
+# EduRead — private data, model artifacts, secrets and local files
+# ============================================================
 
-# Python
+# Python bytecode and build artifacts
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
 *.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 dist/
 build/
+site/
 
 # Virtual environments
+.venv/
 venv/
 env/
-.venv/
+ENV/
 
-# Jupyter Notebook
+# Jupyter
 .ipynb_checkpoints/
+*.nbconvert.ipynb
 
-# Environment variables and secrets
+# Secrets and credentials
 .env
 .env.*
 !.env.example
-*.pem
-*.key
+secrets/
 secrets.json
 token.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+*secret*
 
-# Model weights and checkpoints
+# Hugging Face and other model caches
+.cache/
+.cache/huggingface/
+huggingface_cache/
+hub/
+models--*/
+transformers_cache/
+
+# Model weights, exports and checkpoints
 *.safetensors
 *.bin
 *.pt
 *.pth
 *.ckpt
 *.h5
+*.hdf5
 *.onnx
+*.gguf
+*.ggml
+*.tflite
+*.engine
+*.model
+pytorch_model*
+model.safetensors
+adapter_model*
+adapter_config.json
 
-# Hugging Face cache
-.cache/
-.cache/huggingface/
-huggingface_cache/
-
-# LoRA adapters and training outputs
+# Adapter folders and training outputs
+adapter/
+adapters/
 final_adapter/
+*_adapter/
+*_adapters/
 checkpoints/
+checkpoint/
 checkpoint-*/
 checkpoint_*/
 outputs/
+runs/
 wandb/
-
-# Dataset and generated files
-data/raw/
-data/processed/
-data/generated/
-*.parquet
-
-# Google Colab and Drive
-/content/drive/
-
-# Logs
+mlruns/
+lightning_logs/
+tensorboard/
 *.log
 logs/
 
-# Operating system
+# Private/raw/processed datasets and image collections
+# Keep only explicitly reviewed, synthetic, licensed sample data in Git.
+data/raw/
+data/private/
+data/processed/
+data/generated/
+data/external/
+Dataset/
+Dataset_*/
+Dataset_V*/
+datasets/
+private_dataset/
+private_datasets/
+raw_dataset/
+processed_dataset/
+training_data/
+evaluation_data/
+train/images/
+eval/images/
+images/private/
+images/raw/
+*.parquet
+*.arrow
+*.tfrecord
+*.tfrecords
+*.lmdb
+
+# Large image/audio/video files are not committed by default.
+# If a small, licensed sample is intentionally published, force-add it
+# only after documenting source, permission and privacy review.
+*.dcm
+*.nii
+*.nii.gz
+
+# Local Colab/Drive mounts and machine-specific paths
+/content/drive/
+/content/gdrive/
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# Local IDE settings
+.vscode/
+.idea/
+
+# Keep example environment template
+!.env.example
