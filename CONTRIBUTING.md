@@ -1,98 +1,77 @@
+# Contributing to EduRead
 
-# Contributing to EduRead Gemma 3
+Thank you for your interest in EduRead, an educational vision-language accessibility capstone.
 
-Thank you for your interest in contributing to EduRead Gemma 3 Accessibility Capstone.
+## 1. Contribution goals
 
-EduRead explores the adaptation of vision-language models to generate
-image descriptions, mathematical descriptions and accessible educational
-content for visually impaired students.
+Contributions should improve:
+- Mathematical image understanding.
+- Accessible transcription and explanations.
+- Data quality and provenance.
+- Evaluation methodology.
+- Reproducibility, testing, and documentation.
+- Responsible and inclusive user experience.
 
-## 1. Project Goals
+## 2. Development setup
 
-Contributions should support:
+```bash
+git clone https://github.com/pranayset/EduRead-Gemma3-Accessibility-Capstone.git
+cd EduRead-Gemma3-Accessibility-Capstone
+python -m venv .venv
+```
 
-- Image understanding and description.
-- Accessibility-focused Alt-Text generation.
-- Mathematical image descriptions.
-- Vision-language model improvements.
-- Model evaluation and testing.
-- Accessible and user-friendly interfaces.
+Activate the environment, then install the dependencies appropriate for your hardware and Python version. See `requirements.txt` and the setup notes in `README.md`.
 
-## 2. Getting Started
+## 3. Project structure
 
-Clone the repository:
+- `src/eduread/`: reusable Python modules.
+- `notebooks/`: experiments and Colab workflows.
+- `configs/`: configuration examples.
+- `data/`: public manifests and schema documentation only.
+- `evaluation/`: evaluation protocols and reports.
+- `tests/`: deterministic tests.
 
-    git clone https://github.com/pranayset/EduRead-Gemma3-Accessibility-Capstone.git
+## 4. Dataset and privacy rules
 
-Navigate into the project:
+- Do not commit private, personal, confidential, or restricted datasets.
+- Use synthetic, public, or appropriately licensed material.
+- Record provenance and license information for published samples.
+- Review image and annotation correctness before use.
+- Do not commit raw images or processed dataset tensors unless explicitly reviewed and permitted.
+- Never upload model weights, adapter files, checkpoints, or credentials.
 
-    cd EduRead-Gemma3-Accessibility-Capstone
+## 5. Model and experiment reporting
 
-Install dependencies:
+The audited V3 workflow uses PaliGemma 3B with QLoRA/PEFT. Document the exact model ID, dataset version, configuration, package versions, hardware, and evaluation split for any new experiment.
 
-    pip install -r requirements.txt
+Report negative results and failure cases. Do not claim improved accuracy or accessibility without measured evidence. Keep dataset integrity findings separate from model-generation quality.
 
-## 3. Development Guidelines
+## 6. Code standards
 
-- Write readable and maintainable Python code.
+- Prefer small, readable, documented functions.
 - Follow PEP 8 conventions.
-- Document functions and important code sections.
-- Include appropriate error handling.
-- Test changes before submitting.
-- Avoid committing generated model weights and checkpoints.
+- Add input validation and useful error messages.
+- Avoid hard-coded secrets and machine-specific paths.
+- Add deterministic tests where possible.
+- Do not make tests download a large model or require a GPU by default.
 
-## 4. Dataset Guidelines
+## 7. Pull request process
 
-- Use synthetic, public or appropriately licensed datasets.
-- Do not upload personal or confidential information.
-- Document dataset sources and licenses.
-- Validate image and annotation formats.
-- Respect dataset usage restrictions.
+1. Create a feature branch.
+2. Make a focused change.
+3. Run relevant tests and checks.
+4. Update documentation and configuration examples.
+5. Inspect notebook outputs and diffs for private content.
+6. Submit a pull request describing motivation, changes, validation, and limitations.
 
-## 5. Model Development
+## 8. Reporting issues
 
-The project explores PaliGemma and parameter-efficient
-fine-tuning techniques such as LoRA.
+Include reproduction steps, expected behaviour, actual behaviour, and relevant sanitized logs. Never include access tokens, personal data, or private datasets.
 
-Contributors should:
+## 9. Community standards
 
-- Document model configurations.
-- Record training parameters.
-- Evaluate generated descriptions.
-- Report limitations and known issues.
-- Avoid publishing private model credentials.
+Please follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Review [SECURITY.md](SECURITY.md) for responsible vulnerability reporting.
 
-## 6. Pull Request Process
+## 10. Licensing
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Implement your changes.
-4. Run relevant tests.
-5. Update documentation.
-6. Submit a pull request with a clear description.
-
-## 7. Reporting Issues
-
-When creating an issue, include:
-
-- Description of the problem.
-- Steps to reproduce.
-- Expected behaviour.
-- Actual behaviour.
-- Relevant error messages.
-
-Never include API tokens, private datasets or credentials.
-
-## 8. Code of Conduct
-
-Be respectful, inclusive and constructive.
-
-Contributions should promote accessibility,
-responsible AI development and educational inclusion.
-
-## 9. License
-
-Review the repository's LICENSE file before reusing
-or distributing project code and materials.
-
-Thank you for supporting accessible AI education!
+No project license has been selected yet. Until a license is added, do not assume that public visibility grants permission to reuse or redistribute project materials.
