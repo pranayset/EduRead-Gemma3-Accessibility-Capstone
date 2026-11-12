@@ -1,8 +1,6 @@
-# ============================================================
-# EduRead — private data, model artifacts, secrets and local files
-# ============================================================
+# EduRead — protect credentials, private data, model artifacts and local files
 
-# Python bytecode and build artifacts
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -26,6 +24,8 @@ ENV/
 # Jupyter
 .ipynb_checkpoints/
 *.nbconvert.ipynb
+# Notebook outputs can contain private data, tokens, or large embedded images.
+# Review notebooks before committing; do not blindly ignore all .ipynb files.
 
 # Secrets and credentials
 .env
@@ -43,8 +43,9 @@ id_ed25519
 credentials.json
 service-account*.json
 *secret*
+*token*
 
-# Hugging Face and other model caches
+# Hugging Face and model caches
 .cache/
 .cache/huggingface/
 huggingface_cache/
@@ -90,8 +91,8 @@ tensorboard/
 *.log
 logs/
 
-# Private/raw/processed datasets and image collections
-# Keep only explicitly reviewed, synthetic, licensed sample data in Git.
+# Private, raw, processed, generated, or external datasets
+# Only explicitly reviewed, synthetic, licensed sample files should be committed.
 data/raw/
 data/private/
 data/processed/
@@ -117,31 +118,27 @@ images/raw/
 *.tfrecords
 *.lmdb
 
-# Large image/audio/video files are not committed by default.
-# If a small, licensed sample is intentionally published, force-add it
-# only after documenting source, permission and privacy review.
+# Large media and medical imagery
 *.dcm
 *.nii
 *.nii.gz
 
-# Local Colab/Drive mounts and machine-specific paths
+# Local Colab/Drive mounts and machine-specific files
 /content/drive/
 /content/gdrive/
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Temporary files
+# Temporary and editor files
 *.tmp
 *.temp
 *.bak
 *.swp
 *.swo
 *.orig
-
-# Local IDE settings
 .vscode/
 .idea/
 
-# Keep example environment template
+# Keep reviewed environment template
 !.env.example
