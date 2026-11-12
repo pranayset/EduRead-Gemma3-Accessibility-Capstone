@@ -1,3 +1,13 @@
-# EduRead source code
+# EduRead Python package
 
-Most implementation currently lives in the notebook, so this directory contains documentation rather than a separate implementation. As reusable code is extracted, add tested modules here, such as model loading, inference, mathematical checks, and the Gradio app. Update this README to match the real files.
+This package is the planned home for reusable EduRead implementation modules. The current research workflow is primarily notebook-based; this directory should only claim functionality that has actually been extracted and tested.
+
+## Suggested module boundaries
+
+- `model_loader.py`: model and processor initialization.
+- `inference.py`: image-plus-prompt generation.
+- `data.py`: manifest loading and validation.
+- `evaluation.py`: metric and human-review helpers.
+- `app.py`: Gradio interface.
+
+Add modules incrementally, with deterministic tests and documentation. Do not create placeholder APIs that imply implemented functionality.
