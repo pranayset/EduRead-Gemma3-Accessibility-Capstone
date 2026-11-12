@@ -17,6 +17,8 @@ An educational vision-language capstone exploring mathematical image understandi
 ```text
 EduRead-Gemma3-Accessibility-Capstone/
 ├── README.md
+├── readme.txt
+├── LICENSE_STATUS.md
 ├── README.txt
 ├── LICENSE_STATUS.md
 ├── CONTRIBUTING.md
@@ -26,6 +28,7 @@ EduRead-Gemma3-Accessibility-Capstone/
 ├── CITATION.cff
 ├── .gitignore
 ├── .env.example
+├── pyproject.toml
 ├── pyproject.toml
 ├── requirements.txt
 ├── architecture.md
