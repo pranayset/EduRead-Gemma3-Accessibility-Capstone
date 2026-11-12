@@ -115,7 +115,7 @@ Run lightweight repository tests with:
 python -m pytest
 ```
 
-The tests directory currently contains test-planning documentation. Add actual tests as reusable modules are implemented; do not interpret an empty test suite as successful model validation.
+The tests cover lightweight configuration, evaluation, processed-index validation, and the training-disabled default. They do not run a model, access the private dataset, or validate GPU training.
 
 ## Security and responsible AI
 
@@ -136,14 +136,14 @@ A license has not yet been selected. See [LICENSE_STATUS.md](LICENSE_STATUS.md).
 Reusable components extracted from the completed V3 notebook are in `src/eduread/`:
 
 - `config.py`: audited V3 model, quantization, LoRA, and training settings.
-- `data.py`: read-only raw-manifest and processed-tensor validation.
+- `data.py`: read-only loading of existing V3 processed indexes, lazy tensor datasets, DataLoaders, and optimizer-group token counts.
 - `model_loader.py`: explicit PaliGemma processor and NF4 base-model loaders.
 - `adapters.py`: PEFT adapter initialization and explicit save/load helpers.
-- `training.py`: optimizer/scheduler builders and supervised-token accounting.
+- `training.py`: PagedAdamW8bit/scheduler initialization, token-weighted evaluation, and a callable three-epoch V3 training loop disabled by default.
 - `inference.py`: prompt-boundary handling and greedy inference.
 - `evaluation.py`: text normalization and prediction similarity summaries.
 
-Importing the package does not load model weights, read the private dataset, write artifacts, or train. Model loading, adapter initialization, optimizer construction, inference, and saving occur only when their respective functions are explicitly called. The reusable modules do not automatically run the completed training loop.
+Importing the package does not load model weights, read the private dataset, write artifacts, or train. Model loading, adapter initialization, optimizer construction, inference, and saving occur only when their respective functions are explicitly called. The reusable modules do not automatically run training. `run_v3_training` requires explicit `execute=True`, CUDA, a fresh optimizer/scheduler, the audited V3 LoRA state, and a new empty output directory. It does not resume an interrupted run or overwrite existing checkpoints.
 
 Install the package in editable mode from the repository root:
 
