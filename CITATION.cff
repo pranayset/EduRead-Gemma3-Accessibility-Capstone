@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite the repository and its documentation."
+title: "EduRead — Gemma 3 Accessibility Capstone"
+type: software
+authors:
+  - family-names: Setu
+    given-names: Pranay
+repository-code: "https://github.com/pranayset/EduRead-Gemma3-Accessibility-Capstone"
