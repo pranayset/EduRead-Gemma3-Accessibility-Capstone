@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eduread-accessibility-capstone"
+version = "0.1.0"
+description = "Educational vision-language accessibility capstone prototype"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "See repository licensing status; no license has been selected yet." }
+authors = [{ name = "EduRead project contributors" }]
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
