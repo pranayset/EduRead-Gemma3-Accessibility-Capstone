@@ -1,17 +1,27 @@
-# Evaluation plan
+# Evaluation protocol
 
-Record model/checkpoint, dataset version, split sizes, hardware, package versions, and generation settings for each run.
+Record the model/checkpoint, dataset version, split sizes, hardware, package versions, prompt, decoding settings, and evaluation date for each run.
 
-Review:
-- Alt-text usefulness and concision.
-- Whether claims are grounded in visible content.
-- Mathematical fidelity of symbols, labels, axes, units, and relationships.
-- Clear language and logical reading order.
-- Failure cases such as omissions, hallucinations, OCR errors, and uncertainty.
+## Evaluation dimensions
 
-Use a held-out test set. Automatic metrics should not replace human review for accessibility and mathematics.
+- Mathematical fidelity: symbols, variables, operations, units, and relationships.
+- Completeness: whether all important expression components are covered.
+- Grounding: whether claims are supported by the input image.
+- Clarity: readable language and logical reading order.
+- Accessibility usefulness: whether the explanation communicates the expression without relying on visual notation.
+- Failure analysis: omissions, hallucinations, OCR errors, ambiguity, and premature stopping.
 
-| Run | Test examples | Metric/rubric | Result | Notes |
-|---|---:|---|---|---|
-| Baseline | TBD | TBD | Not measured | Fill after running |
-| Fine-tuned | TBD | TBD | Not measured | Verify adapter reload first |
+Automatic metrics should not replace human review for mathematical correctness and accessibility.
+
+## V3 dataset limitations
+
+The V3 integrity audit found two exact normalized equations shared between training and evaluation, training-content redundancy, and no evaluation examples for linear algebra or logarithms. Probability, statistics, and trigonometry have very small evaluation samples. Report these limitations when presenting results.
+
+See [V3 Dataset Integrity Audit](../V3_DATASET_INTEGRITY_AUDIT.md).
+
+## Run record template
+
+| Run | Model/checkpoint | Dataset/split | Hardware | Generation settings | Metrics | Human review | Notes |
+|---|---|---|---|---|---|---|---|
+| Baseline | TBD | TBD | TBD | TBD | Not recorded here | TBD | Add verified results |
+| V3 adapter | PaliGemma 3B + V3 adapter | V3 evaluation | See run log | Greedy, max 64 tokens in audited comparison | See notebook | Required | Do not infer quality from training loss alone |
