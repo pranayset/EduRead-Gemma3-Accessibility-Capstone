@@ -142,3 +142,7 @@ desktop.ini
 
 # Keep reviewed environment template
 !.env.example
+
+# Local reusable workflow archives
+EduRead_V3_Reusable_Workflow.zip
+EduRead_V3_Reusable_Workflow (1).zip

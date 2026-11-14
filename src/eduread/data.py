@@ -81,3 +81,78 @@ def build_optimizer_group_token_counts(train_loader, accumulation_steps: int = 4
     if len(groups) != 40 or any(x <= 0 for x in groups):
         raise ValueError("Invalid V3 optimizer-group token counts.")
     return groups
+
+
+def validate_processed_index(
+    records: List[Dict[str, Any]],
+    expected_count: int | None = None,
+) -> List[str]:
+    """Validate processed-index metadata without modifying tensor files."""
+
+    errors = []
+
+    if not isinstance(records, list):
+        return ["Index must be a list of records."]
+
+    if expected_count is not None and len(records) != expected_count:
+        errors.append(
+            f"Expected {expected_count} records, found {len(records)}."
+        )
+
+    required_keys = (
+        "example_id",
+        "task_type",
+        "image_filename",
+        "processed_path",
+        "supervised_tokens",
+    )
+
+    seen_ids = set()
+
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            errors.append(f"Record {index} must be a dictionary.")
+            continue
+
+        missing = [
+            key for key in required_keys
+            if key not in record
+        ]
+
+        if missing:
+            errors.append(
+                f"Record {index} is missing fields: {missing}"
+            )
+            continue
+
+        example_id = record["example_id"]
+
+        if not isinstance(example_id, str) or not example_id.strip():
+            errors.append(
+                f"Record {index} has an invalid example_id."
+            )
+        elif example_id in seen_ids:
+            errors.append(f"Duplicate example_id: {example_id}")
+        else:
+            seen_ids.add(example_id)
+
+        if (
+            not isinstance(record["processed_path"], str)
+            or not record["processed_path"].strip()
+        ):
+            errors.append(
+                f"Record {index} has an invalid processed_path."
+            )
+
+        tokens = record["supervised_tokens"]
+
+        if (
+            not isinstance(tokens, int)
+            or isinstance(tokens, bool)
+            or tokens <= 0
+        ):
+            errors.append(
+                f"Record {index} has an invalid supervised_tokens value."
+            )
+
+    return errors

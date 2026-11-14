@@ -1,0 +1,59 @@
+# EduRead V3 audited configuration.
+# This file documents the existing setup; it does not launch training.
+paths:
+  # Set EDUREAD_V3_PROCESSED_DIR in the local environment.
+  # The private audited dataset is not included in this repository.
+  processed_dir: null
+
+data:
+  expected_train_records: 160
+  expected_eval_records: 40
+  expected_train_shifted_tokens: 3545
+  expected_eval_shifted_tokens: 846
+
+dataloader:
+  batch_size: 1
+  shuffle_train: false
+  num_workers: 0
+  drop_last: false
+  pin_memory: false
+  collator: pytorch_default_collate
+
+model:
+  model_id: google/paligemma-3b-pt-448
+  quantization: nf4
+  load_in_4bit: true
+  load_in_8bit: false
+  compute_dtype: float16
+  double_quantization: true
+  attention_implementation: eager
+
+lora:
+  r: 8
+  alpha: 16
+  dropout: 0.05
+  bias: none
+  task_type: CAUSAL_LM
+  target_module_families:
+    - q_proj
+    - v_proj
+  verified_target_module_count: 36
+  verified_trainable_tensor_count: 72
+  verified_trainable_parameter_count: 921600
+
+training:
+  # Documented only. The reusable workflow defaults to validation-only.
+  epochs: 3
+  learning_rate: 0.00002
+  optimizer: paged_adamw_8bit
+  micro_batch_size: 1
+  gradient_accumulation_steps: 4
+  optimizer_groups_per_epoch: 40
+  planned_total_optimizer_updates: 120
+  warmup_steps: 6
+  max_gradient_norm: 1.0
+  gradient_checkpointing: true
+  use_reentrant: false
+  fp16: true
+  bf16: false
+  training_enabled_by_default: false
